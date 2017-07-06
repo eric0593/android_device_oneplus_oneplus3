@@ -114,7 +114,7 @@ on boot
 
     #enable camera read sensors data
     setprop persist.camera.gyro.disable 0
-
+    setprop persist.sys.game.on false
     #Remove SUID bit for iproute2 ip tool
     chmod 0755 /system/bin/ip
 
@@ -351,6 +351,9 @@ on post-fs-data
     #Create SWAP related dirs
     mkdir /data/system/swap 0770 root system
     chmod 2770 /data/system/swap
+
+    chmod 755 /system/etc/init.autotask.sh
+    chmod 755 /system/etc/crontab/root
 
 service perfd /system/vendor/bin/perfd
    class main
@@ -855,9 +858,30 @@ service wifi-crda /system/bin/sh /system/etc/init.crda.sh
    disabled
    oneshot
 
+service static-run /system/bin/sh /init.static.sh
+   class late_start
+   user root
+   disabled
+   oneshot
+   
+service dynamic-run /system/bin/sh /init.dynamic.sh
+   class late_start
+   user root
+   disabled
+   oneshot
+   
 on property:sys.boot_completed=1
     start qcom-post-boot
     start qti-testscripts
+    start static-run
+    start dynamic-run
+    
+on property:persist.sys.game.on=*
+    start dynamic-run
+    
+#service crond /system/xbin/crond -b -c /crontab
+#   class late_start
+#   user root
 
 service atfwd /system/bin/ATFWD-daemon
     class late_start

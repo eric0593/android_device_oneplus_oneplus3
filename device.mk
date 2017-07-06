@@ -289,7 +289,12 @@ PRODUCT_PACKAGES += \
     init.qcom.usb.rc \
     init.qcom.usb.sh \
     init.target.rc \
-    ueventd.qcom.rc
+    ueventd.qcom.rc \
+    init.static.sh \
+    init.dynamic.sh \
+    init.autotask.sh \
+    root \
+    crond
 
 # RIL
 PRODUCT_PACKAGES += \
@@ -326,3 +331,22 @@ PRODUCT_COPY_FILES += \
 
 # Inherit from oppo-common
 $(call inherit-product, device/oppo/common/common.mk)
+
+PRODUCT_PACKAGES += \
+LauncherUnreadService \
+SnapdragonLauncher \
+busybox \
+busybox_links
+
+OEM_IGNORE_PACKAGES += \
+Recorder \
+Email \
+Exchange \
+Exchange2 \
+Eleven \
+Jelly \
+Trebuchet \
+AudioFX
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/crond:system/xbin/crond
